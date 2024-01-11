@@ -1,8 +1,9 @@
 CREATE TABLE Driver
 (
-    id_driver        SERIAL PRIMARY KEY,
-    lastname_driver  VARCHAR(50) NOT NULL,
-    firstname_driver VARCHAR(50) NOT NULL
+    id_driver          SERIAL PRIMARY KEY,
+    lastname_driver    VARCHAR(250) NOT NULL,
+    firstname_driver   VARCHAR(250) NOT NULL,
+    nationality_driver VARCHAR(250) NOT NULL
 );
 
 CREATE TABLE Constructor
