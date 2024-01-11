@@ -16,11 +16,11 @@ public class MenuController {
         System.out.println("2. Menu item 2");
         System.out.println("3. Menu item 3");
         System.out.println("99. Exit application");
-        System.out.println("");
+        System.out.println();
         System.out.print("Please enter your choice : ");
         userChoice = scanner.nextInt();
 
-        System.out.println(""); //Empty line for interface readability
+        System.out.println(); //Empty line for interface readability
 
         //Menu switchs
         switch (userChoice) {
