@@ -26,7 +26,8 @@ CREATE TABLE Standing(
 CREATE TABLE Race
 (
     id_race       SERIAL PRIMARY KEY,
-    location_race VARCHAR(250) NOT NULL UNIQUE
+    city_location_race VARCHAR(250) NOT NULL UNIQUE,
+    country_location_race VARCHAR(250) NOT NULL
 );
 
 CREATE TABLE Teamed

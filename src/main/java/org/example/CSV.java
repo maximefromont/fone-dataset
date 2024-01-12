@@ -64,8 +64,6 @@ public class CSV {
     }
 
     private void fillDriverTable() {
-//        System.out.println(this.data);
-
         for (String[] row : data) {
             String last_name = row[5];
             String first_name = row[4];
@@ -90,6 +88,40 @@ public class CSV {
         }
     }
 
+
+    private void fillRaceTable() {
+        // On sauvegarde toutes les  villes pour éviter de les réinsérer
+        List<String> cities = new ArrayList<>();
+
+        for (String[] row : data) {
+            String city = row[3];
+            String country = row[4];
+
+            if (cities.contains(city)) {
+                continue;
+            } else {
+                cities.add(city);
+            }
+
+            String SQLRequest = "INSERT INTO race(city_location_race, country_location_race) VALUES (?, ?)";
+
+
+            try (Connection connection = DatabaseConnection.getConnection()) {
+                try {
+                    PreparedStatement preparedStatement = connection.prepareStatement(SQLRequest);
+                    preparedStatement.setString(1, city);
+                    preparedStatement.setString(2, country);
+
+                    preparedStatement.executeUpdate();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
     public void fillFromFile() {
         this.readCSV();
 
@@ -99,6 +131,9 @@ public class CSV {
                 break;
             case "driver":
                 this.fillDriverTable();
+                break;
+            case "race":
+                this.fillRaceTable();
                 break;
             default:
                 throw new RuntimeException("Table inconnue");
