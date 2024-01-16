@@ -1,11 +1,14 @@
 package org.example;
 
+import org.example.DBObjects.Constructor;
+import org.example.DBObjects.Driver;
+import org.example.DBObjects.Race;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,11 +18,20 @@ public class CSV {
 
     private final String tableName;
 
+    /**
+     * Constructeur de la classe CSV permettant de lire un fichier CSV et d'ajouter les données (reconnues) dans la base de données
+     *
+     * @param filename  Nom du fichier CSV à parser
+     * @param tableName Nom de la table dans laquelle insérer les données.
+     */
     public CSV(String filename, String tableName) {
         this.filename = filename;
         this.tableName = tableName;
     }
 
+    /**
+     * Méthode permettant de lire un fichier CSV et de stocker les données dans une liste de tableaux de String
+     */
     private void readCSV() {
         this.data = new ArrayList<>();
 
@@ -41,57 +53,51 @@ public class CSV {
     }
 
     private void fillConstructorTable() {
+        ORMSession ormSession = new ORMSession();
+        Session session = ormSession.getSession();
+
         for (String[] row : data) {
             String name = row[2];
             String nationality = row[3];
 
-            String SQLRequest = "INSERT INTO constructor(name_constructor, nationality_constructor) VALUES (?, ?)";
+            // On crée un objet Constructor que l'on va insérer directement grâce à Hibernate
+            Constructor constructor = new Constructor(name, nationality);
 
-            try (Connection connection = DatabaseConnection.getConnection()) {
-                try {
-                    PreparedStatement preparedStatement = connection.prepareStatement(SQLRequest);
-                    preparedStatement.setString(1, name);
-                    preparedStatement.setString(2, nationality);
-
-                    preparedStatement.executeUpdate();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            Transaction tx = session.beginTransaction();
+            session.save(constructor);
+            tx.commit();
         }
+
+        ormSession.closeSession();
     }
 
     private void fillDriverTable() {
+        ORMSession ormSession = new ORMSession();
+        Session session = ormSession.getSession();
+
         for (String[] row : data) {
             String last_name = row[5];
             String first_name = row[4];
             String nationality = row[7];
 
-            String SQLRequest = "INSERT INTO driver(lastname_driver, firstname_driver, nationality_driver) VALUES (?, ?, ?)";
+            // On crée un objet Driver que l'on va insérer directement grâce à Hibernate
+            Driver driver = new Driver(last_name, first_name, nationality);
 
-            try (Connection connection = DatabaseConnection.getConnection()) {
-                try {
-                    PreparedStatement preparedStatement = connection.prepareStatement(SQLRequest);
-                    preparedStatement.setString(1, last_name);
-                    preparedStatement.setString(2, first_name);
-                    preparedStatement.setString(3, nationality);
-
-                    preparedStatement.executeUpdate();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            Transaction tx = session.beginTransaction();
+            session.save(driver);
+            tx.commit();
         }
+
+        ormSession.closeSession();
     }
 
 
     private void fillRaceTable() {
-        // On sauvegarde toutes les  villes pour éviter de les réinsérer
+        // On sauvegarde toutes les villes pour éviter de les réinsérer
         List<String> cities = new ArrayList<>();
+
+        ORMSession ormSession = new ORMSession();
+        Session session = ormSession.getSession();
 
         for (String[] row : data) {
             String city = row[3];
@@ -103,23 +109,15 @@ public class CSV {
                 cities.add(city);
             }
 
-            String SQLRequest = "INSERT INTO race(city_location_race, country_location_race) VALUES (?, ?)";
+            // On crée un objet Race que l'on va insérer directement grâce à Hibernate
+            Race race = new Race(city, country);
 
-
-            try (Connection connection = DatabaseConnection.getConnection()) {
-                try {
-                    PreparedStatement preparedStatement = connection.prepareStatement(SQLRequest);
-                    preparedStatement.setString(1, city);
-                    preparedStatement.setString(2, country);
-
-                    preparedStatement.executeUpdate();
-                } catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+            Transaction tx = session.beginTransaction();
+            session.save(race);
+            tx.commit();
         }
+
+        ormSession.closeSession();
     }
 
     public void fillFromFile() {

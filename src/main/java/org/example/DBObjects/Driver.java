@@ -14,11 +14,6 @@ public class Driver {
         this.nationalityDriver = nationalityDriver;
     }
 
-    //Empty constructor (useful ? The tutorial says so...)
-    public Driver() {
-
-    }
-
     public int getIdDriver() {
         return idDriver;
     }

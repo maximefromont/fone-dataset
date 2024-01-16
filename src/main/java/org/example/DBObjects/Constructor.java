@@ -11,10 +11,6 @@ public class Constructor {
         this.nationalityConstructor = nationalityConstructor;
     }
 
-    public Constructor() {
-
-    }
-
     public int getIdConstructor() {
         return idConstructor;
     }

@@ -11,10 +11,6 @@ public class Race {
         this.countryLocationRace = countryLocationRace;
     }
 
-    public Race() {
-
-    }
-
     public int getIdRace() {
         return idRace;
     }
