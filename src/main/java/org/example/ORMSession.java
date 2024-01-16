@@ -1,8 +1,6 @@
 package org.example;
 
-import org.example.DBObjects.Constructor;
-import org.example.DBObjects.Driver;
-import org.example.DBObjects.Race;
+import org.example.DBObjects.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -39,6 +37,8 @@ public class ORMSession {
         config.addClass(Driver.class);
         config.addClass(Constructor.class);
         config.addClass(Race.class);
+        config.addClass(Teamed.class);
+        config.addClass(Earned.class);
 
         sessionFactory = config.buildSessionFactory();
         session = sessionFactory.openSession();
