@@ -8,9 +8,10 @@ DROP TABLE IF EXISTS race;
 
 CREATE TABLE driver
 (
-    idDriver        SERIAL PRIMARY KEY,
-    lastnameDriver  VARCHAR(50) NOT NULL,
-    firstnameDriver VARCHAR(50) NOT NULL
+    idDriver          SERIAL PRIMARY KEY,
+    lastnameDriver    VARCHAR(250) NOT NULL,
+    firstnameDriver   VARCHAR(250) NOT NULL,
+    nationalityDriver VARCHAR(250) NOT NULL
 );
 
 CREATE TABLE constructor
@@ -33,7 +34,8 @@ CREATE TABLE Standing(
 CREATE TABLE race
 (
     idRace       SERIAL PRIMARY KEY,
-    locationRace VARCHAR(250) NOT NULL UNIQUE
+    cityLocationRace VARCHAR(250) NOT NULL UNIQUE,
+    countryLocationRace     VARCHAR(250) NOT NULL
 );
 
 CREATE TABLE teamed
