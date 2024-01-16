@@ -6,6 +6,7 @@
         <id name="idRace" type="int" column="idRace">
             <generator class="identity"/>
         </id>
-        <property name="locationRace" type="string" not-null="true" unique="true" />
+        <property name="cityLocationRace" type="string" not-null="true" unique="true" />
+        <property name="countryLocationRace" type="string" not-null="true"/>
     </class>
 </hibernate-mapping>

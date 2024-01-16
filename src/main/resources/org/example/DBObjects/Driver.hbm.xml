@@ -8,5 +8,6 @@
         </id>
         <property name="lastnameDriver" type="string" not-null="true" />
         <property name="firstnameDriver" type="string" not-null="true" />
+        <property name="nationalityDriver" type="string" not-null="true" />
     </class>
 </hibernate-mapping>

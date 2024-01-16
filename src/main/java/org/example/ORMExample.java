@@ -34,7 +34,7 @@ public class ORMExample {
             query = session.createQuery(hql);
             query.executeUpdate();
 
-            Driver driver = new Driver("André", "La menace");
+            Driver driver = new Driver("André", "La menace", "France");
             session.save(driver);
 
             //TEST CONSTRUCTOR TABLE
@@ -52,7 +52,7 @@ public class ORMExample {
             query = session.createQuery(hql);
             query.executeUpdate();
 
-            Race race = new Race("Circuit du batiment 620");
+            Race race = new Race("Orsay", "France");
             session.save(race);
 
             //TEST TEAMED TABLE
