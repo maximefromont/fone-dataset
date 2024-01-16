@@ -1,62 +1,70 @@
-CREATE TABLE Driver
+/* Note : if not already done, Create database manually with the name fone-database before running this script */
+
+DROP TABLE IF EXISTS teamed;
+DROP TABLE IF EXISTS earned;
+DROP TABLE IF EXISTS constructor;
+DROP TABLE IF EXISTS driver;
+DROP TABLE IF EXISTS race;
+
+CREATE TABLE driver
 (
-    id_driver          SERIAL PRIMARY KEY,
-    lastname_driver    VARCHAR(250) NOT NULL,
-    firstname_driver   VARCHAR(250) NOT NULL,
-    nationality_driver VARCHAR(250) NOT NULL
+    idDriver          SERIAL PRIMARY KEY,
+    lastnameDriver    VARCHAR(250) NOT NULL,
+    firstnameDriver   VARCHAR(250) NOT NULL,
+    nationalityDriver VARCHAR(250) NOT NULL
 );
 
-CREATE TABLE Constructor
+CREATE TABLE constructor
 (
-    id_constructor          SERIAL PRIMARY KEY,
-    name_constructor        VARCHAR(250) NOT NULL,
-    nationality_constructor VARCHAR(250) NOT NULL,
-    UNIQUE (name_constructor)
+    idConstructor          SERIAL PRIMARY KEY,
+    nameConstructor        VARCHAR(250) NOT NULL,
+    nationalityConstructor VARCHAR(250) NOT NULL,
+    UNIQUE (nameConstructor)
 );
 
 /*
 CREATE TABLE Standing(
-                         id_standing INT,
-                         points_standing INT NOT NULL,
-                         year_standing VARCHAR(50) NOT NULL,
-                         PRIMARY KEY(id_standing)
+                         idStanding INT,
+                         pointsStanding INT NOT NULL,
+                         yearStanding VARCHAR(50) NOT NULL,
+                         PRIMARY KEY(idStanding)
 );
 */
 
-CREATE TABLE Race
+CREATE TABLE race
 (
-    id_race       SERIAL PRIMARY KEY,
-    city_location_race VARCHAR(250) NOT NULL UNIQUE,
-    country_location_race VARCHAR(250) NOT NULL
+    idRace       SERIAL PRIMARY KEY,
+    cityLocationRace VARCHAR(250) NOT NULL UNIQUE,
+    countryLocationRace     VARCHAR(250) NOT NULL
 );
 
-CREATE TABLE Teamed
+CREATE TABLE teamed
 (
-    id_driver      INT,
-    id_constructor INT,
-    year_teamed    VARCHAR(50) NOT NULL,
-    PRIMARY KEY (id_driver, id_constructor),
-    FOREIGN KEY (id_driver) REFERENCES Driver (id_driver),
-    FOREIGN KEY (id_constructor) REFERENCES Constructor (id_constructor)
+    idDriver      INT,
+    idConstructor INT,
+    yearTeamed    VARCHAR(50) NOT NULL,
+    PRIMARY KEY (idDriver, idConstructor),
+    FOREIGN KEY (idDriver) REFERENCES Driver (idDriver),
+    FOREIGN KEY (idConstructor) REFERENCES Constructor (idConstructor)
 );
 
 /*
 CREATE TABLE Stood(
-                      id_driver INT,
-                      id_standing INT,
-                      PRIMARY KEY(id_driver, id_standing),
-                      FOREIGN KEY(id_driver) REFERENCES Driver(id_driver),
-                      FOREIGN KEY(id_standing) REFERENCES Standing(id_standing)
+                      idDriver INT,
+                      idStanding INT,
+                      PRIMARY KEY(idDriver, idStanding),
+                      FOREIGN KEY(idDriver) REFERENCES Driver(idDriver),
+                      FOREIGN KEY(idStanding) REFERENCES Standing(idStanding)
 );
 */
 
-CREATE TABLE Earned
+CREATE TABLE earned
 (
-    id_driver     INT,
-    id_race       INT,
-    points_earned INT         NOT NULL,
-    year_earned   VARCHAR(50) NOT NULL,
-    PRIMARY KEY (id_driver, id_race),
-    FOREIGN KEY (id_driver) REFERENCES Driver (id_driver),
-    FOREIGN KEY (id_race) REFERENCES Race (id_race)
+    idDriver     INT,
+    idRace       INT,
+    pointsEarned INT         NOT NULL,
+    yearEarned   VARCHAR(50) NOT NULL,
+    PRIMARY KEY (idDriver, idRace),
+    FOREIGN KEY (idDriver) REFERENCES Driver (idDriver),
+    FOREIGN KEY (idRace) REFERENCES Race (idRace)
 );
