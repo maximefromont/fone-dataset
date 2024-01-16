@@ -3,10 +3,12 @@ package org.example.DBObjects;
 public class Race {
 
     private int idRace; //UNIQUE & NOT NULL
-    private String locationRace; //UNIQUE & NOT NULL
+    private String cityLocationRace; //UNIQUE & NOT NULL
+    private String countryLocationRace; //NOT NULL
 
-    public Race(String locationRace) {
-        this.locationRace = locationRace;
+    public Race(String cityLocationRace, String countryLocationRace) {
+        this.cityLocationRace = cityLocationRace;
+        this.countryLocationRace = countryLocationRace;
     }
 
     public Race() {
@@ -21,11 +23,19 @@ public class Race {
         this.idRace = idRace;
     }
 
-    public String getLocationRace() {
-        return locationRace;
+    public String getCityLocationRace() {
+        return cityLocationRace;
     }
 
-    public void setLocationRace(String locationRace) {
-        this.locationRace = locationRace;
+    public void setCityLocationRace(String cityLocationRace) {
+        this.cityLocationRace = cityLocationRace;
+    }
+
+    public String getCountryLocationRace() {
+        return countryLocationRace;
+    }
+
+    public void setCountryLocationRace(String countryLocationRace) {
+        this.countryLocationRace = countryLocationRace;
     }
 }

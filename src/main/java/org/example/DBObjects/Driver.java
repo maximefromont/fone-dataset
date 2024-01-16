@@ -5,11 +5,13 @@ public class Driver {
     private int idDriver; //UNIQUE & NOT NULL
     private String lastnameDriver; //NOT NULL
     private String firstnameDriver; //NOT NULL
+    private String nationalityDriver; //NOT NULL
 
     //A driver has to have a lastname and a firstname
-    public Driver(String lastnameDriver, String firstnameDriver) {
+    public Driver(String lastnameDriver, String firstnameDriver, String nationalityDriver) {
         this.lastnameDriver = lastnameDriver;
         this.firstnameDriver = firstnameDriver;
+        this.nationalityDriver = nationalityDriver;
     }
 
     //Empty constructor (useful ? The tutorial says so...)
@@ -39,4 +41,11 @@ public class Driver {
         this.firstnameDriver = firstnameDriver;
     }
 
+    public String getNationalityDriver() {
+        return nationalityDriver;
+    }
+
+    public void setNationalityDriver(String nationalityDriver) {
+        this.nationalityDriver = nationalityDriver;
+    }
 }
