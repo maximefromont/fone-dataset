@@ -18,6 +18,16 @@ public class ORMExample {
             String hql;
             Query query;
 
+            //This bloc of code drops everything in the table
+            hql = String.format("delete from %s", "Teamed");
+            query = session.createQuery(hql);
+            query.executeUpdate();
+
+            //This bloc of code drops everything in the table
+            hql = String.format("delete from %s", "Earned");
+            query = session.createQuery(hql);
+            query.executeUpdate();
+
             //TEST DRIVER TABLE
             //This bloc of code drops everything in the table
             hql = String.format("delete from %s", "Driver");
@@ -44,6 +54,14 @@ public class ORMExample {
 
             Race race = new Race("Circuit du batiment 620");
             session.save(race);
+
+            //TEST TEAMED TABLE
+            Teamed teamed = new Teamed(driver.getIdDriver(), constructor.getIdConstructor(), "2024");
+            session.save(teamed);
+
+            //TEST EARNED TABLE
+            Earned earned = new Earned(driver.getIdDriver(), race.getIdRace(), 15, "2024");
+            session.save(earned);
 
             session.flush() ;
             tx.commit();
