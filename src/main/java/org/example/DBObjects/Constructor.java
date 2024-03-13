@@ -11,6 +11,16 @@ public class Constructor {
         this.nationalityConstructor = nationalityConstructor;
     }
 
+    //Default constructors for queries
+    public Constructor(int idConstructor, String nameConstructor, String nationalityConstructor) {
+        this.idConstructor = idConstructor;
+        this.nameConstructor = nameConstructor;
+        this.nationalityConstructor = nationalityConstructor;
+    }
+
+    public Constructor() {
+    }
+
     public int getIdConstructor() {
         return idConstructor;
     }

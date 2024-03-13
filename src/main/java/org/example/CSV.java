@@ -18,6 +18,8 @@ public class CSV {
 
     private final String tableName;
 
+    private final ORMSession ormSession;
+
     /**
      * Constructeur de la classe CSV permettant de lire un fichier CSV et d'ajouter les données (reconnues) dans la base de données
      *
@@ -27,6 +29,7 @@ public class CSV {
     public CSV(String filename, String tableName) {
         this.filename = filename;
         this.tableName = tableName;
+        this.ormSession = new ORMSession(SOURCE_CSV);
     }
 
     /**
@@ -53,8 +56,6 @@ public class CSV {
     }
 
     private void fillConstructorTable() {
-        ORMSession ormSession = new ORMSession();
-        Session session = ormSession.getSession();
 
         for (String[] row : data) {
             String name = row[2];
@@ -63,17 +64,13 @@ public class CSV {
             // On crée un objet Constructor que l'on va insérer directement grâce à Hibernate
             Constructor constructor = new Constructor(name, nationality);
 
-            Transaction tx = session.beginTransaction();
-            session.save(constructor);
-            tx.commit();
+            ormSession.controlAndSave(constructor);
         }
 
         ormSession.closeSession();
     }
 
     private void fillDriverTable() {
-        ORMSession ormSession = new ORMSession();
-        Session session = ormSession.getSession();
 
         for (String[] row : data) {
             String last_name = row[5];
@@ -83,9 +80,7 @@ public class CSV {
             // On crée un objet Driver que l'on va insérer directement grâce à Hibernate
             Driver driver = new Driver(last_name, first_name, nationality);
 
-            Transaction tx = session.beginTransaction();
-            session.save(driver);
-            tx.commit();
+            ormSession.controlAndSave(driver);
         }
 
         ormSession.closeSession();
@@ -95,9 +90,6 @@ public class CSV {
     private void fillRaceTable() {
         // On sauvegarde toutes les villes pour éviter de les réinsérer
         List<String> cities = new ArrayList<>();
-
-        ORMSession ormSession = new ORMSession();
-        Session session = ormSession.getSession();
 
         for (String[] row : data) {
             String city = row[3];
@@ -112,9 +104,7 @@ public class CSV {
             // On crée un objet Race que l'on va insérer directement grâce à Hibernate
             Race race = new Race(city, country);
 
-            Transaction tx = session.beginTransaction();
-            session.save(race);
-            tx.commit();
+            ormSession.controlAndSave(race);
         }
 
         ormSession.closeSession();
@@ -138,5 +128,8 @@ public class CSV {
         }
 
     }
+
+    //PRIVATE CONSTANTS
+    private static final String SOURCE_CSV = "CSV";
 
 }

@@ -7,6 +7,7 @@ public class ORMExample {
 
     public static void testORM() {
 
+        /*
         //Use ORMSession when you need to access the database
         ORMSession ormSession = new ORMSession();
         Session session = ormSession.getSession();
@@ -76,6 +77,7 @@ public class ORMExample {
 
         ormSession.closeSession();
         ormSession.closeSessionFactory();
+         */
 
     }
 

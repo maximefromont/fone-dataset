@@ -1,5 +1,7 @@
 package org.example;
 
+import java.security.spec.ECGenParameterSpec;
+
 public class Main {
     public static void main(String[] args) {
 //        MenuController.startMenu();
@@ -10,9 +12,9 @@ public class Main {
         //csv.fillFromFile();
 
         //Test api
-        ErgastAPIFetcher fetcher = new ErgastAPIFetcher();
-        fetcher.fillConstructors();
-        fetcher.fillDrivers();
-        fetcher.fillRaces();
+        ErgastAPIFetcher.init();
+        ErgastAPIFetcher.fillConstructors();
+        ErgastAPIFetcher.fillDrivers();
+        ErgastAPIFetcher.fillRaces();
     }
 }

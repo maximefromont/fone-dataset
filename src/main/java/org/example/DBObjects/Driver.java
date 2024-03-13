@@ -14,6 +14,17 @@ public class Driver {
         this.nationalityDriver = nationalityDriver;
     }
 
+    //Default constructors for queries
+    public Driver(int idDriver, String lastnameDriver, String firstnameDriver, String nationalityDriver) {
+        this.idDriver = idDriver;
+        this.lastnameDriver = lastnameDriver;
+        this.firstnameDriver = firstnameDriver;
+        this.nationalityDriver = nationalityDriver;
+    }
+
+    public Driver() {
+    }
+
     public int getIdDriver() {
         return idDriver;
     }

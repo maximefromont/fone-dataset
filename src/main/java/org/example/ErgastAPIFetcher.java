@@ -20,18 +20,20 @@ import java.net.http.HttpResponse;
 public class ErgastAPIFetcher {
 
     //CONSTRUCTOR
-    public ErgastAPIFetcher() {
-        this.client = HttpClient.newHttpClient();
-        this.gson = new Gson();
+    public static void init() {
+        client = HttpClient.newHttpClient();
+        gson = new Gson();
+        ormSession = new ORMSession(SOURCE_ERGAST_API);
+
+        //Note : I am not using getter and setter here because this is a static class
     }
 
-    //Fill f1 constructors founds from the API in the Database
-    public void fillConstructors() {
+    public static void fillConstructors() {
 
         //Build the http request with the endpoint URL
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(ERGAST_API_CONSTRUCTOR_JSON_ENDPOINT)).GET().build();
 
-        try (Session session = new ORMSession().getSession()) {
+        try {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -52,12 +54,8 @@ public class ErgastAPIFetcher {
 
                     if(element.isJsonObject()) { //Check 2 to ensure that each element in the array is indeed a JsonObject
                         Constructor constructor = new Constructor(name, nationality);
-                        session.save(constructor);
+                        ormSession.controlAndSave(constructor);
                     }
-
-                    //Start the transaction here
-                    Transaction tx = session.beginTransaction();
-                    tx.commit(); //Commit the transaction
                 }
             } else {
                 System.err.println("Failed to fetch constructors. HTTP error code: " + response.statusCode());
@@ -68,12 +66,12 @@ public class ErgastAPIFetcher {
         }
     }
 
-    public void fillDrivers() {
+    public static void fillDrivers() {
 
         //Build the http request with the endpoint URL
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(ERGAST_API_DRIVER_JSON_ENDPOINT)).GET().build();
 
-        try (Session session = new ORMSession().getSession()) {
+        try {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -96,12 +94,9 @@ public class ErgastAPIFetcher {
 
                     if (element.isJsonObject()) {
                         Driver driver = new Driver(lastName, firstName, nationality);
-                        session.save(driver);
+                        ormSession.controlAndSave(driver);
                     }
                 }
-
-                Transaction tx = session.beginTransaction();
-                tx.commit();
             } else {
                 System.err.println("Failed to fetch drivers. HTTP error code: " + response.statusCode());
             }
@@ -111,12 +106,12 @@ public class ErgastAPIFetcher {
         }
     }
 
-    public void fillRaces() {
+    public static void fillRaces() {
 
         //Build the http request with the endpoint URL
         HttpRequest request = HttpRequest.newBuilder().uri(URI.create(ERGAST_API_RACE_JSON_ENDPOINT)).GET().build();
 
-        try (Session session = new ORMSession().getSession()) {
+        try {
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -139,12 +134,9 @@ public class ErgastAPIFetcher {
 
                     if (element.isJsonObject()) {
                         Race race = new Race(city, country);
-                        session.save(race);
+                        ormSession.controlAndSave(race);
                     }
                 }
-
-                Transaction tx = session.beginTransaction();
-                tx.commit();
             } else {
                 System.err.println("Failed to fetch drivers. HTTP error code: " + response.statusCode());
             }
@@ -154,31 +146,35 @@ public class ErgastAPIFetcher {
         }
     }
 
+
+
     //PRIVATE CONSTANTS
+    private static final String SOURCE_ERGAST_API = "Ergast API";
 
-    private final String ERGAST_API_JSON_HEADER = "MRData";
+    private static final String ERGAST_API_JSON_HEADER = "MRData";
 
-    private final String ERGAST_API_CONSTRUCTOR_JSON_ENDPOINT = "http://ergast.com/api/f1/constructors.json";
-    private final String ERGAST_API_CONSTRUCTOR_JSON_TABLE_NAME = "ConstructorTable";
-    private final String ERGAST_API_CONSTRUCTOR_JSON_ARRAY_NAME = "Constructors";
-    private final String ERGAST_API_CONSTRUCTOR_JSON_NAME_ATTRIBUTE_NAME = "name";
-    private final String ERGAST_API_CONSTRUCTOR_JSON_NATIONALITY_ATTRIBUTE_NAME = "nationality";
+    private static final String ERGAST_API_CONSTRUCTOR_JSON_ENDPOINT = "http://ergast.com/api/f1/constructors.json";
+    private static final String ERGAST_API_CONSTRUCTOR_JSON_TABLE_NAME = "ConstructorTable";
+    private static final String ERGAST_API_CONSTRUCTOR_JSON_ARRAY_NAME = "Constructors";
+    private static final String ERGAST_API_CONSTRUCTOR_JSON_NAME_ATTRIBUTE_NAME = "name";
+    private static final String ERGAST_API_CONSTRUCTOR_JSON_NATIONALITY_ATTRIBUTE_NAME = "nationality";
 
-    private final String ERGAST_API_DRIVER_JSON_ENDPOINT = "http://ergast.com/api/f1/drivers.json";
-    private final String ERGAST_API_DRIVER_JSON_TABLE_NAME = "DriverTable";
-    private final String ERGAST_API_DRIVER_JSON_ARRAY_NAME = "Drivers";
-    private final String ERGAST_API_DRIVER_JSON_FIRSTNAME_ATTRIBUTE_NAME = "givenName";
-    private final String ERGAST_API_DRIVER_JSON_LASTNAME_ATTRIBUTE_NAME = "familyName";
-    private final String ERGAST_API_DRIVER_JSON_NATIONALITY_ATTRIBUTE_NAME = "nationality";
+    private static final String ERGAST_API_DRIVER_JSON_ENDPOINT = "http://ergast.com/api/f1/drivers.json";
+    private static final String ERGAST_API_DRIVER_JSON_TABLE_NAME = "DriverTable";
+    private static final String ERGAST_API_DRIVER_JSON_ARRAY_NAME = "Drivers";
+    private static final String ERGAST_API_DRIVER_JSON_FIRSTNAME_ATTRIBUTE_NAME = "givenName";
+    private static final String ERGAST_API_DRIVER_JSON_LASTNAME_ATTRIBUTE_NAME = "familyName";
+    private static final String ERGAST_API_DRIVER_JSON_NATIONALITY_ATTRIBUTE_NAME = "nationality";
 
-    private final String ERGAST_API_RACE_JSON_ENDPOINT = "http://ergast.com/api/f1/circuits.json";
-    private final String ERGAST_API_RACE_JSON_TABLE_NAME = "CircuitTable";
-    private final String ERGAST_API_RACE_JSON_ARRAY_NAME = "Circuits";
-    private final String ERGAST_API_RACE_LOCATION_JSON_ARRAY_NAME = "Location";
-    private final String ERGAST_API_RACE_JSON_CITY_ATTRIBUTE_NAME = "locality";
-    private final String ERGAST_API_RACE_JSON_COUNTRY_ATTRIBUTE_NAME = "country";
+    private static final String ERGAST_API_RACE_JSON_ENDPOINT = "http://ergast.com/api/f1/circuits.json";
+    private static final String ERGAST_API_RACE_JSON_TABLE_NAME = "CircuitTable";
+    private static final String ERGAST_API_RACE_JSON_ARRAY_NAME = "Circuits";
+    private static final String ERGAST_API_RACE_LOCATION_JSON_ARRAY_NAME = "Location";
+    private static final String ERGAST_API_RACE_JSON_CITY_ATTRIBUTE_NAME = "locality";
+    private static final String ERGAST_API_RACE_JSON_COUNTRY_ATTRIBUTE_NAME = "country";
 
     //PRIVATE CONSTANTS ATTRIBUTES
-    private final HttpClient    client;
-    private final Gson          gson;
+    private static HttpClient    client;
+    private static Gson          gson;
+    private static ORMSession    ormSession;
 }

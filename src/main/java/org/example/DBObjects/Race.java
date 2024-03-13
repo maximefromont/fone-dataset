@@ -11,6 +11,16 @@ public class Race {
         this.countryLocationRace = countryLocationRace;
     }
 
+    //Default constructors for queries
+    public Race(int idRace, String cityLocationRace, String countryLocationRace) {
+        this.idRace = idRace;
+        this.cityLocationRace = cityLocationRace;
+        this.countryLocationRace = countryLocationRace;
+    }
+
+    public Race() {
+    }
+
     public int getIdRace() {
         return idRace;
     }
