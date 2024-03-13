@@ -5,6 +5,7 @@ import java.util.Scanner;
 public class MenuController {
 
     //TODO : Change variables, menus strings, and methods names for better readability (instead of "menu item" ...)
+    private static F1Scaper f1Scaper = new F1Scaper();
 
     public static void startMenu() {
 
@@ -34,6 +35,7 @@ public class MenuController {
     private static void handleMenuItem1() {
         //Code action 1 here, call a controller or instanciate a specific class for complex action
         System.out.println("You have selected menu item 1");
+        f1Scaper.scrapeDrivers();
     }
 
     private static void handleMenuItem2() {
