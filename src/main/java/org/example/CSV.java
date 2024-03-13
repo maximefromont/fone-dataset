@@ -47,6 +47,9 @@ public class CSV {
 
             while ((line = bufferedReader.readLine()) != null) {
                 String[] values = line.split(",");
+                for (int i = 0; i < values.length; i++) {
+                    values[i] = values[i].replace("\"", "");
+                }
                 data.add(values);
             }
 

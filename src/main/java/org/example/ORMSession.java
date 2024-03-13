@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 
 import java.io.*;
 
@@ -30,24 +31,41 @@ public class ORMSession {
 
     public void controlAndSave(Driver driver) {
         //This check makes sure that no drivers with the same firstname, same lastname and same nationality exists in the database
-        for (Driver d : getSession().createQuery("FROM Driver", Driver.class).list()) {
+        //I added SQL where clause to make the query and the following loop way more efficient.
+        Query query = getSession().createQuery("FROM Driver WHERE firstnamedriver = :firstnamedriver AND lastnamedriver = :lastnamedriver AND nationalitydriver = :nationalitydriver", Driver.class);
+        query.setParameter("firstnamedriver", driver.getFirstnameDriver());
+        query.setParameter("lastnamedriver", driver.getLastnameDriver());
+        query.setParameter("nationalitydriver", driver.getNationalityDriver());
+
+        for(int i = 0; i < query.list().size(); i++)
+        {
+            Driver d = (Driver) query.list().get(i);
             if (d.getFirstnameDriver().equals(driver.getFirstnameDriver()) && d.getLastnameDriver().equals(driver.getLastnameDriver()) && d.getNationalityDriver().equals(driver.getNationalityDriver())) {
                 return;
             }
         }
+
         getSession().save(driver); //If the loop ends, it means that no driver with the same firstname, lastname and nationality exists in the database
         beginAndCommitTransaction();
 
-        logDatabaseSave(driver, driver.getFirstnameDriver() + driver.getLastnameDriver());
+        logDatabaseSave(driver, driver.getLastnameDriver() + " " + driver.getFirstnameDriver());
     }
 
     public void controlAndSave(Constructor constructor) {
         //This check makes sure that no constructors with the same name already exists in the database
-        for (Constructor c : getSession().createQuery("FROM Constructor", Constructor.class).list()) {
+        //I added SQL where clause to make the query and the following loop way more efficient.
+
+        Query query = getSession().createQuery("FROM Constructor WHERE nameconstructor = :nameconstructor", Constructor.class);
+        query.setParameter("nameconstructor", constructor.getNameConstructor());
+
+        for(int i = 0; i < query.list().size(); i++)
+        {
+            Constructor c = (Constructor) query.list().get(i);
             if (c.getNameConstructor().equals(constructor.getNameConstructor())) {
                 return;
             }
         }
+
         getSession().save(constructor); //If the loop ends, it means that no constructor with the same name exists in the database
         beginAndCommitTransaction();
 
@@ -56,11 +74,19 @@ public class ORMSession {
 
     public void controlAndSave(Race race) {
         //This check makes sure that no race with the same cityLocation already exists in the database
-        for (Race c : getSession().createQuery("FROM Race", Race.class).list()) {
-            if (c.getCityLocationRace().equals(race.getCityLocationRace())) {
+        //I added SQL where clause to make the query and the following loop way more efficient.
+
+        Query query = getSession().createQuery("FROM Race WHERE citylocationrace = :citylocationrace", Race.class);
+        query.setParameter("citylocationrace", race.getCityLocationRace());
+
+        for(int i = 0; i < query.list().size(); i++)
+        {
+            Race r = (Race) query.list().get(i);
+            if (r.getCityLocationRace().equals(race.getCityLocationRace())) {
                 return;
             }
         }
+
         getSession().save(race); //If the loop ends, it means that no race with the same cityLocation exists in the database
         beginAndCommitTransaction();
 
@@ -100,10 +126,13 @@ public class ORMSession {
             }
         }
 
+        //That way, the logs txt files will have one line per line added in database.
+        //Note that if you reset the database, you should also reset the log txt file.
+
         try {
             Writer output;
             output = new BufferedWriter(new FileWriter(file, true));
-            output.append(Object.class.toString() + " added from " + getSource() + ". Identifier : " + identifier + "\n");
+            output.append(object.getClass().toString() + " added from " + getSource() + ". Identifier : " + identifier + "\n");
             output.close();
         } catch (IOException e) {
             e.printStackTrace();
