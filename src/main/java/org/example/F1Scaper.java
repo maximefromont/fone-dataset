@@ -1,28 +1,43 @@
 package org.example;
 
+import org.example.DBObjects.Driver;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class F1Scaper {
+
+    //PRIVATE ATTRIBUTES
+    private static ORMSession session;
+
     /*
     TODO scraper ces sites
 https://fr.wikipedia.org/wiki/Palmar%C3%A8s_du_championnat_du_monde_de_Formule_1
 https://www.formula1.com/en/results.html/2021/drivers.html
      */
 
+    //PRIVATE CONSTANTS
+
     //region Formula1
-    private final String URL = "https://www.formula1.com/en/results.html/%s/drivers.html";
-    private final String TABLE_DIV = "div.resultsarchive-wrapper table.resultsarchive-table tbody tr";
+    private static final String URL = "https://www.formula1.com/en/results.html/%s/drivers.html";
+    private static final String TABLE_DIV = "div.resultsarchive-wrapper table.resultsarchive-table tbody tr";
     //endregion
 
     //region Wikipedia
-    private final String URL_WIKI = "https://fr.wikipedia.org/wiki/Palmar%C3%A8s_du_championnat_du_monde_de_Formule_1";
-    private final String TABLE_WIKI = "//*[@id='mw-content-text']/div[1]/table[1]";
+    private static final String URL_WIKI = "https://fr.wikipedia.org/wiki/Palmar%C3%A8s_du_championnat_du_monde_de_Formule_1";
+    private static final String TABLE_WIKI = "//*[@id='mw-content-text']/div[1]/table[1]";
+
+    private static final String SOURCE_SCRAPPER = "Scrapper";
+
+    //PUBLIC INTERFACE
+    public static void init()
+    {
+        session = new ORMSession(SOURCE_SCRAPPER);
+    }
 
     //endregion
-    public void scrapeDrivers() {
+    public static void scrapeDrivers() {
         try {
             for (int year = 1950; year < 1951; year++) {
                 Document doc = Jsoup.connect(String.format(URL, year)).get();
@@ -33,8 +48,13 @@ https://www.formula1.com/en/results.html/2021/drivers.html
                     String nationality = row.select("td").get(3).text();
                     String team = row.select("td").get(4).text();
                     String points = row.select("td").get(5).text();
+
+                    //This is the part that adds it in the database
+                    Driver driver = new Driver(name.substring(0, name.indexOf(" ")), name.substring(name.indexOf(" "), name.length()), nationality);
+                    session.controlAndSave(driver);
+
                     //print all
-                    System.out.println(position + " | " + name + " | " + nationality + " | " + team + " | " + points);
+//                    System.out.println(position + " | " + name + " | " + nationality + " | " + team + " | " + points);
                 }
                 Thread.sleep(5000);
                 System.out.println("-------------------");
@@ -46,7 +66,7 @@ https://www.formula1.com/en/results.html/2021/drivers.html
         }
     }
 
-    public void scrapeWiki() {
+    public static void scrapeWiki() {
         try {
             Document doc = Jsoup.connect(URL_WIKI).get();
             Elements rows = doc.selectXpath(TABLE_WIKI);
@@ -91,12 +111,6 @@ https://www.formula1.com/en/results.html/2021/drivers.html
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) {
-        F1Scaper f1Scaper = new F1Scaper();
-//        f1Scaper.scrapeDrivers();
-        f1Scaper.scrapeWiki();
     }
 
 }

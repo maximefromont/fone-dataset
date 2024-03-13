@@ -48,7 +48,7 @@ public class ORMSession {
         getSession().save(driver); //If the loop ends, it means that no driver with the same firstname, lastname and nationality exists in the database
         beginAndCommitTransaction();
 
-        logDatabaseSave(driver, driver.getFirstnameDriver() + " " + driver.getLastnameDriver());
+        logDatabaseSave(driver, driver.getLastnameDriver() + " " + driver.getFirstnameDriver());
     }
 
     public void controlAndSave(Constructor constructor) {
