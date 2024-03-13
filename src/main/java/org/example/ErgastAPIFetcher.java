@@ -30,8 +30,9 @@ public class ErgastAPIFetcher {
 
     public static void fillConstructors() {
 
-        //Build the http request with the endpoint URL
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(ERGAST_API_CONSTRUCTOR_JSON_ENDPOINT)).GET().build();
+        //Build the http request with the endpoint URL and a set limit (this project is an example this is why we are limiting the use of the API)
+        HttpRequest request = HttpRequest.newBuilder().uri(
+                URI.create(ERGAST_API_CONSTRUCTOR_JSON_ENDPOINT + "?limit=" + ERGAST_API_CONSTRUCTOR_JSON_LIMIT)).GET().build();
 
         try {
 
@@ -68,8 +69,9 @@ public class ErgastAPIFetcher {
 
     public static void fillDrivers() {
 
-        //Build the http request with the endpoint URL
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(ERGAST_API_DRIVER_JSON_ENDPOINT)).GET().build();
+        //Build the http request with the endpoint URL and a set limit (this project is an example this is why we are limiting the use of the API)
+        HttpRequest request = HttpRequest.newBuilder().uri(
+                URI.create(ERGAST_API_DRIVER_JSON_ENDPOINT + "?limit=" + ERGAST_API_DRIVER_JSON_LIMIT)).GET().build();
 
         try {
 
@@ -108,8 +110,9 @@ public class ErgastAPIFetcher {
 
     public static void fillRaces() {
 
-        //Build the http request with the endpoint URL
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(ERGAST_API_RACE_JSON_ENDPOINT)).GET().build();
+        //Build the http request with the endpoint URL and a set limit (this project is an example this is why we are limiting the use of the API)
+        HttpRequest request = HttpRequest.newBuilder().uri(
+                URI.create(ERGAST_API_RACE_JSON_ENDPOINT + "?limit=" + ERGAST_API_RACE_JSON_LIMIT)).GET().build();
 
         try {
 
@@ -154,12 +157,14 @@ public class ErgastAPIFetcher {
     private static final String ERGAST_API_JSON_HEADER = "MRData";
 
     private static final String ERGAST_API_CONSTRUCTOR_JSON_ENDPOINT = "http://ergast.com/api/f1/constructors.json";
+    private static final int    ERGAST_API_CONSTRUCTOR_JSON_LIMIT = 100;
     private static final String ERGAST_API_CONSTRUCTOR_JSON_TABLE_NAME = "ConstructorTable";
     private static final String ERGAST_API_CONSTRUCTOR_JSON_ARRAY_NAME = "Constructors";
     private static final String ERGAST_API_CONSTRUCTOR_JSON_NAME_ATTRIBUTE_NAME = "name";
     private static final String ERGAST_API_CONSTRUCTOR_JSON_NATIONALITY_ATTRIBUTE_NAME = "nationality";
 
     private static final String ERGAST_API_DRIVER_JSON_ENDPOINT = "http://ergast.com/api/f1/drivers.json";
+    private static final int    ERGAST_API_DRIVER_JSON_LIMIT = 100;
     private static final String ERGAST_API_DRIVER_JSON_TABLE_NAME = "DriverTable";
     private static final String ERGAST_API_DRIVER_JSON_ARRAY_NAME = "Drivers";
     private static final String ERGAST_API_DRIVER_JSON_FIRSTNAME_ATTRIBUTE_NAME = "givenName";
@@ -167,6 +172,7 @@ public class ErgastAPIFetcher {
     private static final String ERGAST_API_DRIVER_JSON_NATIONALITY_ATTRIBUTE_NAME = "nationality";
 
     private static final String ERGAST_API_RACE_JSON_ENDPOINT = "http://ergast.com/api/f1/circuits.json";
+    private static final int    ERGAST_API_RACE_JSON_LIMIT = 100;
     private static final String ERGAST_API_RACE_JSON_TABLE_NAME = "CircuitTable";
     private static final String ERGAST_API_RACE_JSON_ARRAY_NAME = "Circuits";
     private static final String ERGAST_API_RACE_LOCATION_JSON_ARRAY_NAME = "Location";
