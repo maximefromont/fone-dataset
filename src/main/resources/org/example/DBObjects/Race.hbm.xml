@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping
+        PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping"><hibernate-mapping>
+    <class name="org.example.DBObjects.Race" table="race">
+        <id name="idRace" type="int" column="idRace">
+            <generator class="identity"/>
+        </id>
+        <property name="cityLocationRace" type="string" not-null="true" unique="true" />
+        <property name="countryLocationRace" type="string" not-null="true"/>
+    </class>
+</hibernate-mapping>

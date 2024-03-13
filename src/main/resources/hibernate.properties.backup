@@ -1,0 +1,20 @@
+# Database connection settings (make sure your database is name "fone-database")
+hibernate.connection.driver_class=org.postgresql.Driver
+hibernate.connection.url=jdbc:postgresql://localhost:5432/fone-database
+hibernate.connection.username=[REPLACE WITH YOUR USERNAME]
+hibernate.connection.password=[REPLACE WITH YOUR PASSWORD]
+
+# JDBC connection pool settings
+hibernate.c3p0.min_size=5
+hibernate.c3p0.max_size=20
+hibernate.c3p0.timeout=300
+hibernate.c3p0.max_statements=50
+hibernate.c3p0.idle_test_period=3000
+
+# Hibernate settings
+hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+hibernate.show_sql=true
+hibernate.format_sql=true
+
+# Specify the use of C3P0 connection pool
+hibernate.c3p0.preferredTestQuery=SELECT 1
