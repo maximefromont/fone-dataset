@@ -23,11 +23,12 @@ public class Teamed implements Serializable {
         return Objects.hash(idDriver, idConstructor);
     }
 
-    private int idDriver; //UNIQUE & NOT NULL
-    private int idConstructor; //UNIQUE & NOT NULL
+    private int idTeam; //UNIQUE & NOT NULL
+    private Driver idDriver; //NOT NULL
+    private Constructor idConstructor; //NOT NULL
     private String yearTeamed; //NOT NULL
 
-    public Teamed(int idDriver, int idConstructor, String yearTeamed) {
+    public Teamed(Driver idDriver, Constructor idConstructor, String yearTeamed) {
         this.idDriver = idDriver;
         this.idConstructor = idConstructor;
         this.yearTeamed = yearTeamed;
@@ -37,26 +38,26 @@ public class Teamed implements Serializable {
 
     }
 
-    public int getIdDriver() {
+    public int getIdTeam() { return  idTeam; }
+    public void setIdTeam(int idTeam) { this.idTeam = idTeam; }
+
+    public Driver getIdDriver() {
         return idDriver;
     }
-
-    public void setIdDriver(int idDriver) {
+    public void setIdDriver(Driver idDriver) {
         this.idDriver = idDriver;
     }
 
-    public int getIdConstructor() {
+    public Constructor getIdConstructor() {
         return idConstructor;
     }
-
-    public void setIdConstructor(int idConstructor) {
+    public void setIdConstructor(Constructor idConstructor) {
         this.idConstructor = idConstructor;
     }
 
     public String getYearTeamed() {
         return yearTeamed;
     }
-
     public void setYearTeamed(String yearTeamed) {
         this.yearTeamed = yearTeamed;
     }

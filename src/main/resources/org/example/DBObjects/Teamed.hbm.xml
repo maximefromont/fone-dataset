@@ -3,10 +3,11 @@
         PUBLIC "-//Hibernate/Hibernate Mapping DTD 2.0//EN"
         "http://www.hibernate.org/dtd/hibernate-mapping"><hibernate-mapping>
     <class name="org.example.DBObjects.Teamed" table="teamed">
-        <composite-id>
-            <key-property name="idDriver" column="idDriver" type="int"/>
-            <key-property name="idConstructor" column="idConstructor" type="int"/>
-        </composite-id>
+        <id name="idTeam" type="int" column="idTeam">
+            <generator class="identity"/>
+        </id>
+        <many-to-one name="idDriver" class="org.example.DBObjects.Driver" column="idDriver" />
+        <many-to-one name="idConstructor" class="org.example.DBObjects.Constructor" column="idConstructor" />
         <property name="yearTeamed" type="string" not-null="true"/>
     </class>
 </hibernate-mapping>

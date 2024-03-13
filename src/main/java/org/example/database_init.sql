@@ -40,10 +40,10 @@ CREATE TABLE race
 
 CREATE TABLE teamed
 (
+    idTeam        SERIAL PRIMARY KEY,
     idDriver      INT,
     idConstructor INT,
     yearTeamed    VARCHAR(50) NOT NULL,
-    PRIMARY KEY (idDriver, idConstructor),
     FOREIGN KEY (idDriver) REFERENCES Driver (idDriver),
     FOREIGN KEY (idConstructor) REFERENCES Constructor (idConstructor)
 );
