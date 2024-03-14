@@ -144,11 +144,11 @@ public class ErgastAPIFetcher {
         }
     }
 
-    public static void fillTeamed() {
+    public static void fillTeamed(int yearIndex) {
 
         //Build the http request with the endpoint URL and a set limit (this project is an example this is why we are limiting the use of the API)
         HttpRequest request = HttpRequest.newBuilder().uri(
-                URI.create(ERGAST_API_STANDING_JSON_ENDPOINT + "?limit=" + ERGAST_API_STANDING_JSON_LIMIT)).GET().build();
+                URI.create(ERGAST_API_STANDING_JSON_ENDPOINT + yearIndex + ERGAST_API_STANDING_JSON_ENDPOINT_2 + "?limit=" + ERGAST_API_STANDING_JSON_LIMIT)).GET().build();
 
         try {
 
@@ -203,6 +203,14 @@ public class ErgastAPIFetcher {
         }
     }
 
+    public static void fillAllTeamed()
+    {
+        for (int i = 1950; i < 2023; i++)
+        {
+            fillTeamed(i);
+        }
+    }
+
 
 
     //PRIVATE CONSTANTS
@@ -233,7 +241,8 @@ public class ErgastAPIFetcher {
     private static final String ERGAST_API_RACE_JSON_CITY_ATTRIBUTE_NAME = "locality";
     private static final String ERGAST_API_RACE_JSON_COUNTRY_ATTRIBUTE_NAME = "country";
 
-    private static final String ERGAST_API_STANDING_JSON_ENDPOINT = "http://ergast.com/api/f1/2022/5/driverStandings.json";
+    private static final String ERGAST_API_STANDING_JSON_ENDPOINT = "http://ergast.com/api/f1/";
+    private static final String ERGAST_API_STANDING_JSON_ENDPOINT_2 = "/driverStandings.json";
     private static final int    ERGAST_API_STANDING_JSON_LIMIT = 1000;
     private static final String ERGAST_API_STANDING_JSON_TABLE_NAME = "StandingsTable";
     private static final String ERGAST_API_STANDING_JSON_ARRAY_NAME = "StandingsLists";
