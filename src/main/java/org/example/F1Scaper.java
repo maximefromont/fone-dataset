@@ -6,6 +6,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class F1Scaper {
 
     //PRIVATE ATTRIBUTES
@@ -39,22 +42,37 @@ https://www.formula1.com/en/results.html/2021/drivers.html
     //endregion
     public static void scrapeDrivers() {
         try {
-            for (int year = 1950; year < 1951; year++) {
+            for (int year = 1950; year < 2025; year++) {
                 Document doc = Jsoup.connect(String.format(URL, year)).get();
                 Elements rows = doc.select(TABLE_DIV);
                 for (Element row : rows) {
-                    String position = row.select("td").get(1).text();
-                    String name = row.select("td").get(2).text();
+                    String position = row.select("td").get(1).text().trim();
+
+                    // Identify firstname and lastname based on the info in the html > some names or firstnames are composed
+                    String fullName = row.select("td").get(2).text();
+                    String[] split = fullName.split(" ");
+                    String shortenedName = split[split.length - 1];
+                    String firstName = "", lastName = "";
+                    String searchString = fullName.substring(0, fullName.indexOf(shortenedName));
+                    Pattern pattern = Pattern.compile("(?i) "+shortenedName+"(.+)");
+                    Matcher matcher = pattern.matcher(searchString);
+                    if (matcher.find()) {
+                        lastName = matcher.group(0).trim();
+                        firstName = searchString.substring(0, searchString.indexOf(lastName)).trim();
+                    }
+                    if (firstName.isEmpty() || lastName.isEmpty()) continue;
+
+
                     String nationality = row.select("td").get(3).text();
                     String team = row.select("td").get(4).text();
                     String points = row.select("td").get(5).text();
 
                     //This is the part that adds it in the database
-                    Driver driver = new Driver(name.substring(0, name.indexOf(" ")), name.substring(name.indexOf(" "), name.length()), nationality);
+                    Driver driver = new Driver(lastName, firstName, nationality);
                     session.controlAndSave(driver);
 
                     //print all
-//                    System.out.println(position + " | " + name + " | " + nationality + " | " + team + " | " + points);
+                    System.out.println(position + " | " + firstName + " | "+ lastName +" | " + nationality + " | " + team + " | " + points);
                 }
                 Thread.sleep(5000);
                 System.out.println("-------------------");
@@ -70,19 +88,12 @@ https://www.formula1.com/en/results.html/2021/drivers.html
         try {
             Document doc = Jsoup.connect(URL_WIKI).get();
             Elements rows = doc.selectXpath(TABLE_WIKI);
-//            System.out.println(rows);
-//            for (Element row : rows) {
-//                String position = row.select("td").get(1).text();
-//                String name = row.select("td").get(2).text();
-//            }
             Elements res = rows.select("table.wikitable tbody tr");
-            //pop the first element
             for (int i = 0; i < res.size(); i++) {
-                if (i == 0) continue;
+                if (i == 0) continue; //header row
 
                 Element row = res.get(i);
                 Elements columns = row.select("td");
-//                System.out.println(columns);
 
                 if (columns.size() > 1) { // S'assurer que ce n'est pas une ligne d'en-tête
                     String annee = columns.get(0).text();
@@ -95,8 +106,8 @@ https://www.formula1.com/en/results.html/2021/drivers.html
                     String deuxiemePays = columns.get(4).select("a").attr("title").replace("Drapeau : ", "");
                     String troisieme = columns.get(5).text();
                     String troisiemePays = columns.get(5).select("a").attr("title").replace("Drapeau : ", "");
-                    String constructeur = columns.size() > 6 ? columns.get(6).text() : ""; // Ajustez selon la structure
-                    String moteur = columns.size() > 7 ? columns.get(7).text() : ""; // Ajustez selon la structure
+                    String constructeur = columns.size() > 6 ? columns.get(6).text() : "";
+                    String moteur = columns.size() > 7 ? columns.get(7).text() : "";
 
                     System.out.println("Année: " + annee + ", Vainqueur: " + vainqueur + " (" + vainqueurPays + ")"
                             + ", Automobile: " + automobile + ", Pneus: " + pneus
