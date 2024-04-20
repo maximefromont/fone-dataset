@@ -1,11 +1,18 @@
 package org.example;
 
+import lombok.Builder;
+import lombok.Data;
 import org.example.DBObjects.Driver;
+import org.example.DBObjects.Teamed;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -40,9 +47,19 @@ https://www.formula1.com/en/results.html/2021/drivers.html
     }
 
     //endregion
-    public static void scrapeDrivers() {
+
+    /**
+     * Scrape the drivers from the Formula1 website
+     * @param fromYear the year to start scraping from (min 1950)
+     * @param toYear the year to stop scraping at (max 2024)
+     */
+    public static void scrapeDrivers(int fromYear, int toYear) {
+        if (fromYear < 1950 || toYear > 2024) {
+            throw new IllegalArgumentException("Invalid year range");
+        }
         try {
-            for (int year = 1950; year < 2025; year++) {
+            Map<String, List<Driver>> driversCurrentYear = new HashMap<>();
+            for (int year = fromYear; year < toYear; year++) {
                 Document doc = Jsoup.connect(String.format(URL, year)).get();
                 Elements rows = doc.select(TABLE_DIV);
                 for (Element row : rows) {
@@ -70,14 +87,43 @@ https://www.formula1.com/en/results.html/2021/drivers.html
                     //This is the part that adds it in the database
                     Driver driver = new Driver(lastName, firstName, nationality);
                     session.controlAndSave(driver);
+                    driversCurrentYear.merge(
+                            team,
+                            List.of(driver),
+                            (existing, replacement) -> {
+                                List<Driver> newList = new ArrayList<>(existing);
+                                newList.addAll(replacement);
+                                return newList;
+                            }
+                    );
+
+                    //
 
                     //print all
                     System.out.println(position + " | " + firstName + " | "+ lastName +" | " + nationality + " | " + team + " | " + points);
                 }
                 Thread.sleep(5000);
                 System.out.println("-------------------");
+                //Filling the teamed table
+                for (Map.Entry<String, List<Driver>> entry : driversCurrentYear.entrySet()) {
+                    List<Driver> drivers = entry.getValue();
+                    int idConstructor = session.getIdConstructor(entry.getKey());
+                    if (idConstructor != -1 ) {
+                        drivers.forEach(driver -> {
+                            int idDriver = session.getIdDriver(driver.getFirstnameDriver(), driver.getLastnameDriver());
+                            if (idDriver != -1) {
+                                System.out.println("Saving team: " + entry.getKey() + " " + driver.getFirstnameDriver() + " id:" + idDriver + " " +
+                                        driver.getLastnameDriver() + " " + entry.getKey() + " " + year);
+                                Teamed teamed = new Teamed(idDriver, idConstructor, String.valueOf(year));
+                                session.controlAndSave(teamed);
+                            }
+                        });
+                    } else {
+                        System.out.println("Error trying to save team: " + entry.getKey() + " " + drivers.size() + " " + idConstructor);
+                    }
+                }
+                break;
             }
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -114,6 +160,7 @@ https://www.formula1.com/en/results.html/2021/drivers.html
                             + ", Deuxième: " + deuxieme + " (" + deuxiemePays + ")"
                             + ", Troisième: " + troisieme + " (" + troisiemePays + ")"
                             + ", Constructeur: " + constructeur + ", Moteur: " + moteur);
+                    // pas assez d'info pour Earned, manque des informations pour la race et les points par personne
 
                 }
 //                break;
@@ -123,5 +170,12 @@ https://www.formula1.com/en/results.html/2021/drivers.html
             e.printStackTrace();
         }
     }
+    @Builder
+    @Data
+    static class DriverAndPoints {
+        private Driver driver;
+        private int points;
+    }
 
 }
+

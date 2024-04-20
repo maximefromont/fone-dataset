@@ -1,7 +1,6 @@
 package org.example;
 
 import org.example.DBObjects.*;
-import org.hibernate.ObjectDeletedException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -49,6 +48,52 @@ public class ORMSession {
         beginAndCommitTransaction();
 
         logDatabaseSave(driver, driver.getLastnameDriver() + " " + driver.getFirstnameDriver());
+    }
+
+    public void controlAndSave(Teamed teamed) {
+        //This check makes sure that no teamed with the same idDriver, same idConstructor and same yearTeamed exists in the database
+
+        Query<Teamed> query = getSession().createQuery("FROM Teamed WHERE idDriver = :idDriver AND idConstructor = :idConstructor AND yearteamed = :yearteamed", Teamed.class);
+        query.setParameter("idDriver", teamed.getIdDriver());
+        query.setParameter("idConstructor", teamed.getIdConstructor());
+        query.setParameter("yearteamed", teamed.getYearTeamed());
+
+        for (int i = 0; i < query.list().size(); i++) {
+            Teamed t = (Teamed) query.list().get(i);
+            if (t.getIdDriver() == teamed.getIdDriver()
+                    && t.getIdConstructor() == teamed.getIdConstructor()
+                    && t.getYearTeamed().equals(teamed.getYearTeamed())) {
+                return;
+            }
+        }
+
+        getSession().save(teamed); //If the loop ends, it means that no teamed with the same idDriver, idConstructor and yearTeamed exists in the database
+        beginAndCommitTransaction();
+    }
+
+    public int getIdConstructor(String nameConstructor) {
+        Query query = getSession().createQuery("FROM Constructor WHERE nameconstructor = :nameconstructor", Constructor.class);
+        query.setParameter("nameconstructor", nameConstructor);
+
+        try {
+            Constructor constructor = (Constructor) query.list().get(0);
+            return constructor.getIdConstructor();
+        } catch (Exception e) {
+            return -1;
+        }
+    }
+
+    public int getIdDriver(String firstName, String lastName) {
+        Query query = getSession().createQuery("FROM Driver WHERE firstnamedriver = :firstnamedriver AND lastnamedriver = :lastnamedriver", Driver.class);
+        query.setParameter("firstnamedriver", firstName);
+        query.setParameter("lastnamedriver", lastName);
+
+        try {
+            Driver driver = (Driver) query.list().get(0);
+            return driver.getIdDriver();
+        } catch (Exception e) {
+            return -1;
+        }
     }
 
     public void controlAndSave(Constructor constructor) {
