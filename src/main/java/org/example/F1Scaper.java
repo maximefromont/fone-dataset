@@ -131,7 +131,7 @@ https://www.formula1.com/en/results.html/2021/drivers.html
                         System.out.println("Error trying to save team: " + entry.getKey() + " " + drivers.size());
                     }
                 }
-                break;
+//                break;
             }
 
         } catch (Exception e) {

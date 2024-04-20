@@ -76,7 +76,8 @@ public class MenuController {
         System.out.println("You have selected 'Fill database with datas from scrapped websites'.\n");
         System.out.println("Please note that this action will take a long time and will only fill the driver table\n");
         //Init and launch scrapper
-        f1Scaper.scrapeDrivers(1950, 2024, false);
+        F1Scaper.init();
+        F1Scaper.scrapeDrivers(1950, 2024, false);
 
         startMenu(); //And back to start menu
     }
