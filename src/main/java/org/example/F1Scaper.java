@@ -2,6 +2,7 @@ package org.example;
 
 import lombok.Builder;
 import lombok.Data;
+import org.example.DBObjects.Constructor;
 import org.example.DBObjects.Driver;
 import org.example.DBObjects.Teamed;
 import org.jsoup.Jsoup;
@@ -107,19 +108,23 @@ https://www.formula1.com/en/results.html/2021/drivers.html
                 //Filling the teamed table
                 for (Map.Entry<String, List<Driver>> entry : driversCurrentYear.entrySet()) {
                     List<Driver> drivers = entry.getValue();
-                    int idConstructor = session.getIdConstructor(entry.getKey());
-                    if (idConstructor != -1 ) {
+//                    int idConstructor = session.getIdConstructor(entry.getKey());
+                    Constructor constructor = session.getConstructor(entry.getKey());
+                    if (constructor != null ) {
                         drivers.forEach(driver -> {
                             int idDriver = session.getIdDriver(driver.getFirstnameDriver(), driver.getLastnameDriver());
                             if (idDriver != -1) {
+                                driver.setIdDriver(idDriver);
                                 System.out.println("Saving team: " + entry.getKey() + " " + driver.getFirstnameDriver() + " id:" + idDriver + " " +
                                         driver.getLastnameDriver() + " " + entry.getKey() + " " + year);
-                                Teamed teamed = new Teamed(idDriver, idConstructor, String.valueOf(year));
+//                                Teamed teamed = new Teamed(idDriver, idConstructor, String.valueOf(year)); //old version of the model
+//                                session.controlAndSaveTeamed(teamed);
+                                Teamed teamed = new Teamed(driver, constructor, String.valueOf(year)); //old version of the model
                                 session.controlAndSave(teamed);
                             }
                         });
                     } else {
-                        System.out.println("Error trying to save team: " + entry.getKey() + " " + drivers.size() + " " + idConstructor);
+                        System.out.println("Error trying to save team: " + entry.getKey() + " " + drivers.size());
                     }
                 }
                 break;

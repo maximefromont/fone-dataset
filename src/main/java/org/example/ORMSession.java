@@ -144,7 +144,7 @@ public class ORMSession {
         }
     }
 
-        public void controlAndSave(Teamed teamed) {
+        public void controlAndSaveTeamed(Teamed teamed) {
             //This check makes sure that no teamed with the same idDriver, same idConstructor and same yearTeamed exists in the database
 
             Query<Teamed> query = getSession().createQuery("FROM Teamed WHERE idDriver = :idDriver AND idConstructor = :idConstructor AND yearteamed = :yearteamed", Teamed.class);
@@ -176,6 +176,18 @@ public class ORMSession {
                 return -1;
             }
         }
+
+    public Constructor getConstructor(String nameConstructor) {
+        Query query = getSession().createQuery("FROM Constructor WHERE nameconstructor = :nameconstructor", Constructor.class);
+        query.setParameter("nameconstructor", nameConstructor);
+
+        try {
+            Constructor constructor = (Constructor) query.list().get(0);
+            return constructor;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
         public int getIdDriver(String firstName, String lastName) {
             Query query = getSession().createQuery("FROM Driver WHERE firstnamedriver = :firstnamedriver AND lastnamedriver = :lastnamedriver", Driver.class);
