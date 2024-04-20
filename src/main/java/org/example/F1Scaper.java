@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,7 +55,7 @@ https://www.formula1.com/en/results.html/2021/drivers.html
      * @param fromYear the year to start scraping from (min 1950)
      * @param toYear the year to stop scraping at (max 2024)
      */
-    public static void scrapeDrivers(int fromYear, int toYear) {
+    public static void scrapeDrivers(int fromYear, int toYear, boolean saveTeamed) {
         if (fromYear < 1950 || toYear > 2024) {
             throw new IllegalArgumentException("Invalid year range");
         }
@@ -106,20 +107,23 @@ https://www.formula1.com/en/results.html/2021/drivers.html
                 Thread.sleep(5000);
                 System.out.println("-------------------");
                 //Filling the teamed table
+
+                if (!saveTeamed) continue;
                 for (Map.Entry<String, List<Driver>> entry : driversCurrentYear.entrySet()) {
                     List<Driver> drivers = entry.getValue();
 //                    int idConstructor = session.getIdConstructor(entry.getKey());
                     Constructor constructor = session.getConstructor(entry.getKey());
                     if (constructor != null ) {
+                        AtomicReference<String> finalYear = new AtomicReference<>(String.valueOf(year));
                         drivers.forEach(driver -> {
                             int idDriver = session.getIdDriver(driver.getFirstnameDriver(), driver.getLastnameDriver());
                             if (idDriver != -1) {
                                 driver.setIdDriver(idDriver);
                                 System.out.println("Saving team: " + entry.getKey() + " " + driver.getFirstnameDriver() + " id:" + idDriver + " " +
-                                        driver.getLastnameDriver() + " " + entry.getKey() + " " + year);
+                                        driver.getLastnameDriver() + " " + entry.getKey() + " " + finalYear.get());
 //                                Teamed teamed = new Teamed(idDriver, idConstructor, String.valueOf(year)); //old version of the model
 //                                session.controlAndSaveTeamed(teamed);
-                                Teamed teamed = new Teamed(driver, constructor, String.valueOf(year)); //old version of the model
+                                Teamed teamed = new Teamed(driver, constructor, String.valueOf(finalYear.get())); //old version of the model
                                 session.controlAndSave(teamed);
                             }
                         });

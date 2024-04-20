@@ -74,8 +74,9 @@ public class MenuController {
     private static void handleMenuItem11(){
         //Code action 11 here, call a controller or instanciate a specific class for complex action
         System.out.println("You have selected 'Fill database with datas from scrapped websites'.\n");
-
+        System.out.println("Please note that this action will take a long time and will only fill the driver table\n");
         //Init and launch scrapper
+        f1Scaper.scrapeDrivers(1950, 2024, false);
 
         startMenu(); //And back to start menu
     }
