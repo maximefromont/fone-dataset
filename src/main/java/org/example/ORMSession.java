@@ -28,114 +28,208 @@ public class ORMSession {
         getSession().close();
     }
 
-    public void controlAndSave(Driver driver) {
-        //This check makes sure that no drivers with the same firstname, same lastname and same nationality exists in the database
+    public Driver getDriverFromLastnameFirstnameNationality(String lastname, String firstname, String nationality)
+    {
         //I added SQL where clause to make the query and the following loop way more efficient.
-        Query query = getSession().createQuery("FROM Driver WHERE firstnamedriver = :firstnamedriver AND lastnamedriver = :lastnamedriver AND nationalitydriver = :nationalitydriver", Driver.class);
-        query.setParameter("firstnamedriver", driver.getFirstnameDriver());
-        query.setParameter("lastnamedriver", driver.getLastnameDriver());
-        query.setParameter("nationalitydriver", driver.getNationalityDriver());
+        Query query = getSession().createQuery("FROM Driver WHERE lastnamedriver = :lastnamedriver AND firstnamedriver = :firstnamedriver AND nationalitydriver = :nationalitydriver", Driver.class);
+        query.setParameter("lastnamedriver", lastname);
+        query.setParameter("firstnamedriver", firstname);
+        query.setParameter("nationalitydriver", nationality);
 
-        for(int i = 0; i < query.list().size(); i++)
+        //There should be only one result or nothing
+        if(query.list().size() > 0)
         {
-            Driver d = (Driver) query.list().get(i);
-            if (d.getFirstnameDriver().equals(driver.getFirstnameDriver()) && d.getLastnameDriver().equals(driver.getLastnameDriver()) && d.getNationalityDriver().equals(driver.getNationalityDriver())) {
-                return;
-            }
+            return (Driver) query.list().get(0);
         }
-
-        getSession().save(driver); //If the loop ends, it means that no driver with the same firstname, lastname and nationality exists in the database
-        beginAndCommitTransaction();
-
-        logDatabaseSave(driver, driver.getLastnameDriver() + " " + driver.getFirstnameDriver());
+        else
+        {
+            return null;
+        }
     }
 
-    public void controlAndSave(Teamed teamed) {
-        //This check makes sure that no teamed with the same idDriver, same idConstructor and same yearTeamed exists in the database
+    public Driver getDriverFromId(int idDriver)
+    {
+        Query query = getSession().createQuery("FROM Driver WHERE iddriver = :iddriver", Driver.class);
+        query.setParameter("iddriver", idDriver);
 
-        Query<Teamed> query = getSession().createQuery("FROM Teamed WHERE idDriver = :idDriver AND idConstructor = :idConstructor AND yearteamed = :yearteamed", Teamed.class);
-        query.setParameter("idDriver", teamed.getIdDriver());
-        query.setParameter("idConstructor", teamed.getIdConstructor());
-        query.setParameter("yearteamed", teamed.getYearTeamed());
-
-        for (int i = 0; i < query.list().size(); i++) {
-            Teamed t = (Teamed) query.list().get(i);
-            if (t.getIdDriver() == teamed.getIdDriver()
-                    && t.getIdConstructor() == teamed.getIdConstructor()
-                    && t.getYearTeamed().equals(teamed.getYearTeamed())) {
-                return;
-            }
+        //There should be only one result or nothing
+        if(query.list().size() > 0)
+        {
+            return (Driver) query.list().get(0);
         }
-
-        getSession().save(teamed); //If the loop ends, it means that no teamed with the same idDriver, idConstructor and yearTeamed exists in the database
-        beginAndCommitTransaction();
+        else
+        {
+            return null;
+        }
     }
 
-    public int getIdConstructor(String nameConstructor) {
+    public Constructor getConstructorFromNameConstructor(String nameConstructor)
+    {
+        //I added SQL where clause to make the query and the following loop way more efficient.
         Query query = getSession().createQuery("FROM Constructor WHERE nameconstructor = :nameconstructor", Constructor.class);
         query.setParameter("nameconstructor", nameConstructor);
 
-        try {
-            Constructor constructor = (Constructor) query.list().get(0);
-            return constructor.getIdConstructor();
-        } catch (Exception e) {
-            return -1;
-        }
-    }
-
-    public int getIdDriver(String firstName, String lastName) {
-        Query query = getSession().createQuery("FROM Driver WHERE firstnamedriver = :firstnamedriver AND lastnamedriver = :lastnamedriver", Driver.class);
-        query.setParameter("firstnamedriver", firstName);
-        query.setParameter("lastnamedriver", lastName);
-
-        try {
-            Driver driver = (Driver) query.list().get(0);
-            return driver.getIdDriver();
-        } catch (Exception e) {
-            return -1;
-        }
-    }
-
-    public void controlAndSave(Constructor constructor) {
-        //This check makes sure that no constructors with the same name already exists in the database
-        //I added SQL where clause to make the query and the following loop way more efficient.
-
-        Query query = getSession().createQuery("FROM Constructor WHERE nameconstructor = :nameconstructor", Constructor.class);
-        query.setParameter("nameconstructor", constructor.getNameConstructor());
-
-        for(int i = 0; i < query.list().size(); i++)
+        //There should be only one result or nothing
+        if(query.list().size() > 0)
         {
-            Constructor c = (Constructor) query.list().get(i);
-            if (c.getNameConstructor().equals(constructor.getNameConstructor())) {
-                return;
+            return (Constructor) query.list().get(0);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public Constructor getConstructorFromId(int idConstructor)
+    {
+        Query query = getSession().createQuery("FROM Constructor WHERE idconstructor = :idconstructor", Constructor.class);
+        query.setParameter("idconstructor", idConstructor);
+
+        //There should be only one result or nothing
+        if(query.list().size() > 0)
+        {
+            return (Constructor) query.list().get(0);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public Race getRaceFromCityLocationRace(String cityLocationRace)
+    {
+        //I added SQL where clause to make the query and the following loop way more efficient.
+        Query query = getSession().createQuery("FROM Race WHERE citylocationrace = :citylocationrace", Race.class);
+        query.setParameter("citylocationrace", cityLocationRace);
+
+        //There should be only one result or nothing
+        if(query.list().size() > 0)
+        {
+            return (Race) query.list().get(0);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public Teamed getTeamFromIdDriverIdConstructorYearTeamed(Driver driver, Constructor constructor, String yearTeamed)
+    {
+        Query query = getSession().createQuery("FROM Teamed WHERE iddriver = :iddriver AND idconstructor = :idconstructor AND yearteamed = :yearteamed", Teamed.class);
+        query.setParameter("iddriver", driver);
+        query.setParameter("idconstructor", constructor);
+        query.setParameter("yearteamed", yearTeamed);
+
+        //There should be only one result or nothing
+        if (query.list().size() > 0)
+        {
+            return (Teamed) query.list().get(0);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+
+    public void controlAndSave(Driver driver) {
+        //This check makes sure that no drivers with the same firstname, same lastname and same nationality exists in the database
+        Driver driverToCheck = getDriverFromLastnameFirstnameNationality(driver.getLastnameDriver(), driver.getFirstnameDriver(), driver.getNationalityDriver());
+
+        if(driverToCheck == null) { //If getDriverFromLastnameFirstnameNationality(...) sends back null, it means this driver doesn't already exists
+            getSession().save(driver); //If the loop ends, it means that no driver with the same firstname, lastname and nationality exists in the database
+            beginAndCommitTransaction();
+
+            logDatabaseSave(driver, driver.getFirstnameDriver() + " " + driver.getLastnameDriver());
+        }
+    }
+
+        public void controlAndSave(Teamed teamed) {
+            //This check makes sure that no teamed with the same idDriver, same idConstructor and same yearTeamed exists in the database
+
+            Query<Teamed> query = getSession().createQuery("FROM Teamed WHERE idDriver = :idDriver AND idConstructor = :idConstructor AND yearteamed = :yearteamed", Teamed.class);
+            query.setParameter("idDriver", teamed.getIdDriver());
+            query.setParameter("idConstructor", teamed.getIdConstructor());
+            query.setParameter("yearteamed", teamed.getYearTeamed());
+
+            for (int i = 0; i < query.list().size(); i++) {
+                Teamed t = (Teamed) query.list().get(i);
+                if (t.getIdDriver() == teamed.getIdDriver()
+                        && t.getIdConstructor() == teamed.getIdConstructor()
+                        && t.getYearTeamed().equals(teamed.getYearTeamed())) {
+                    return;
+                }
+            }
+
+            getSession().save(teamed); //If the loop ends, it means that no teamed with the same idDriver, idConstructor and yearTeamed exists in the database
+            beginAndCommitTransaction();
+        }
+
+        public int getIdConstructor(String nameConstructor) {
+            Query query = getSession().createQuery("FROM Constructor WHERE nameconstructor = :nameconstructor", Constructor.class);
+            query.setParameter("nameconstructor", nameConstructor);
+
+            try {
+                Constructor constructor = (Constructor) query.list().get(0);
+                return constructor.getIdConstructor();
+            } catch (Exception e) {
+                return -1;
             }
         }
 
-        getSession().save(constructor); //If the loop ends, it means that no constructor with the same name exists in the database
-        beginAndCommitTransaction();
+        public int getIdDriver(String firstName, String lastName) {
+            Query query = getSession().createQuery("FROM Driver WHERE firstnamedriver = :firstnamedriver AND lastnamedriver = :lastnamedriver", Driver.class);
+            query.setParameter("firstnamedriver", firstName);
+            query.setParameter("lastnamedriver", lastName);
 
-        logDatabaseSave(constructor, constructor.getNameConstructor());
+            try {
+                Driver driver = (Driver) query.list().get(0);
+                return driver.getIdDriver();
+            } catch (Exception e) {
+                return -1;
+            }
+        }
+
+    public void controlAndSave(Constructor constructor) {
+        //This check makes sure that no constructors with the same name already exists in the database
+        Constructor constructorToCheck = getConstructorFromNameConstructor(constructor.getNameConstructor());
+
+        if (constructorToCheck == null) //If getConstructorFromNameconstructor(...) sends back null, it means this constructor doesn't already exists
+        {
+            getSession().save(constructor); //If the loop ends, it means that no constructor with the same name exists in the database
+            beginAndCommitTransaction();
+
+            logDatabaseSave(constructor, constructor.getNameConstructor());
+        }
     }
 
     public void controlAndSave(Race race) {
         //This check makes sure that no race with the same cityLocation already exists in the database
-        //I added SQL where clause to make the query and the following loop way more efficient.
+        Race raceToCheck = getRaceFromCityLocationRace(race.getCityLocationRace());
 
-        Query query = getSession().createQuery("FROM Race WHERE citylocationrace = :citylocationrace", Race.class);
-        query.setParameter("citylocationrace", race.getCityLocationRace());
-
-        for(int i = 0; i < query.list().size(); i++)
+        if (raceToCheck == null)  //If getRaceFromCityLocationRace(...) sends back null, it means this race doesn't already exists
         {
-            Race r = (Race) query.list().get(i);
-            if (r.getCityLocationRace().equals(race.getCityLocationRace())) {
-                return;
-            }
+            getSession().save(race); //If the loop ends, it means that no race with the same cityLocation exists in the database
+            beginAndCommitTransaction();
+
+            logDatabaseSave(race, race.getCityLocationRace());
         }
+    }
 
-        getSession().save(race); //If the loop ends, it means that no race with the same cityLocation exists in the database
-        beginAndCommitTransaction();
+    public void controlAndSave(Teamed team) {
+        //This check makes sure that no team with the same idDriver, idConstructor and yearTeamed already exists in the database
+        Teamed teamToCheck = getTeamFromIdDriverIdConstructorYearTeamed(team.getIdDriver(), team.getIdConstructor(), team.getYearTeamed());
 
-        logDatabaseSave(race, race.getCityLocationRace());
+        if(teamToCheck == null)
+        {
+            getSession().save(team);
+            beginAndCommitTransaction();
+
+            Driver driver = team.getIdDriver();
+            Constructor constructor = team.getIdConstructor();
+
+            logDatabaseSave(team, driver.getLastnameDriver() + " " + driver.getFirstnameDriver() + " | " + constructor.getNameConstructor() + " | " + team.getYearTeamed());
+        }
     }
 
 
